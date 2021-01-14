@@ -1,0 +1,26 @@
+plugins {
+    id 'java-platform'
+    id 'maven-publish'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    constraints {
+        api("org.apache.httpcomponents:fluent-hc:4.5.10")
+        api("org.apache.httpcomponents:httpclient:4.5.10")
+    }
+}
+
+publishing {
+    publications {
+        pluginMaven(MavenPublication) {
+            from(components["javaPlatform"])
+        }
+    }
+}

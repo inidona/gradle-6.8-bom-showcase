@@ -8,14 +8,11 @@ version '1.0-SNAPSHOT'
 repositories {
     mavenCentral()
 }
-configurations{
-    bom
-    implementation.extendsFrom bom
-}
+
 dependencies {
-    //bom platform('org.springframework.boot:spring-boot-dependencies:2.1.2.RELEASE')
-    bom platform(project(path:":", configuration:"bom"))
-    implementation 'org.springframework.boot:spring-boot-test'
+    implementation platform(project(':platform'))
+    //bom platform(project(path:":", configuration:"bom"))
+    implementation 'org.apache.httpcomponents:httpclient'
 }
 
 test {
