@@ -1,0 +1,5 @@
+rootProject.name = 'Gradle-68-showcase'
+include 'lib1'
+include 'lib2'
+include 'WebsphereEAR'
+

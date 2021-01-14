@@ -1,0 +1,23 @@
+plugins {
+    id 'java'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+configurations{
+    bom
+    implementation.extendsFrom bom
+}
+dependencies {
+    bom platform('org.springframework.boot:spring-boot-dependencies:2.1.2.RELEASE')
+    //bom platform(project(path:":", configuration:"bom"))
+    implementation 'org.springframework.boot:spring-boot-test'
+}
+
+test {
+    useJUnitPlatform()
+}
