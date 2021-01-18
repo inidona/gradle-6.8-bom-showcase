@@ -1,41 +1,64 @@
 # Problem
 
 
-i defined a new configuration in WebshereEAR project called "bom" with a platform dependency.
+I've defined a new configuration in EjbModule called `bom` with a platform dependency.
+This is used for convenience to not repeat the bom for every configuration that it should usually be used in.
+
 
 ````groovy
-
-configurations{
-    bom
-    implementation.extendsFrom bom
-    earlib.extendsFrom bom
+plugins {
+    id 'java-library'
 }
+
+configurations {
+    bom // convinience configuration to apply boms to more than one configuration
+    implementation.extendsFrom bom
+    ... // and various others
+}
+
 dependencies {
     bom platform('org.springframework.boot:spring-boot-dependencies:2.1.2.RELEASE')
-    //earlib 'org.junit.jupiter:junit-jupiter-api:5.6.0'
-    //deploy 'org.junit.jupiter:junit-jupiter-engine:5.6.0'
-    deploy project(path:":lib1")
-    earlib project(path:":lib1")
-    earlib 'org.springframework.boot:spring-boot-test'
+
+    implementation 'org.apache.commons:commons-lang3' // version 3.8.1 selected by spring boot pom
 }
-
-
-}
-
 ````
-
-i will use the versions defined in bom file but they can not be resolved
+while this works in the `EjbModule`, the resolution of the transitive dependency for the `EarModule` is broken if I try to configure it like this:
+```groovy
+plugins {
+    id 'ear'
+}
+dependencies {
+    deploy project(path:":EjbModule")
+    earlib project(path:":EjbModule") // add transitive dependencies of the EjbModule too
+}
+```
+adding the BOM again to any of the Ear Plugins configurations does not fix the following error:
 
 ````groovy
-Execution failed for task ':WebsphereEAR:ear'.
-> Could not resolve all files for configuration ':WebsphereEAR:earlib'.
-> Could not find org.springframework.boot:spring-boot-test:.
-Required by:
-project :WebsphereEAR
-project :WebsphereEAR > project :lib1
+$ ./gradlew assemble
+> Task :EarModule:ear FAILED
 
-Possible solution:
-- Declare repository providing the artifact, see the documentation at https://docs.gradle.org/current/userguide/declaring_repositories.html
-}
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':EarModule:ear'.
+> Could not resolve all files for configuration ':EarModule:earlib'.
+   > Could not find org.apache.commons:commons-lang3:.
+     Required by:
+         project :EarModule > project :EjbModule
+
+* Try:
+Run with --stacktrace option to get the stack trace. Run with --info or --debug option to get more log output. Run with --scan to get full insights.
+
+* Get more help at https://help.gradle.org
 ````
-if i also apply the java plugin to the EAR project it works as excepted, but why ?
+
+The strange thing is, adding the `java` plugin to the `ear` project
+```groovy
+plugins {
+    id 'ear'
+    id 'java' // activating this will fix the resolution but why?
+}
+```
+seems to solve the issue, but why?
+Ultimately I'd like to not have to apply java to a ear project as java code does not make any sense in a packaging only project.

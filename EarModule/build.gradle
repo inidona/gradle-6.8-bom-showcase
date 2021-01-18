@@ -1,0 +1,18 @@
+plugins {
+    id 'ear'
+    //id 'java' // activating this will fix the resolution but why?
+}
+
+configurations{
+    bom // convinience configuration to apply boms to more than one configuration
+    deploy.extendsFrom bom
+    earlib.extendsFrom bom
+}
+
+dependencies {
+    bom platform('org.springframework.boot:spring-boot-dependencies:2.1.2.RELEASE')
+
+    deploy project(path:":EjbModule")
+    earlib project(path:":EjbModule") // add transitive dependencies of the EjbModule too
+}
+
