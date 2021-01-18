@@ -1,18 +1,28 @@
 plugins {
     id 'java-platform'
+    id 'maven-publish'
 }
-
-group 'org.example'
-version '1.0-SNAPSHOT'
 
 allprojects {
     repositories.mavenCentral()
 }
 
-configurations {
-    bom
+javaPlatform {
+    allowDependencies()
 }
 
 dependencies {
-    bom platform('org.springframework.boot:spring-boot-dependencies:2.1.2.RELEASE')
+    api platform('org.springframework.boot:spring-boot-dependencies:2.1.2.RELEASE')
+
+    constraints {
+        api project(':lib1')
+    }
+}
+
+publishing {
+    publications {
+        mavenPublish(MavenPublication) {
+            from components.javaPlatform
+        }
+    }
 }

@@ -1,9 +1,18 @@
 plugins {
     id 'java-library'
+    id 'maven-publish'
 }
 
 dependencies {
-    implementation platform(project(path: ':', configuration: 'bom'))
+    api platform(project(path: ':'))
 
     implementation 'org.apache.commons:commons-lang3' // version 3.8.1 selected by spring boot pom
+}
+
+publishing {
+    publications {
+        mavenPublish(MavenPublication) {
+            from components.java
+        }
+    }
 }
