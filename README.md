@@ -1,46 +1,38 @@
-# Problem
+# Solution
 
-I defined a new configuration in root project called "bom" with a platform dependency.
+Changing the parent project to a `java-platform` and using the `api` dependency to reference the external BOM:
 
 ````groovy
-configurations {
-    bom
-}
-
+plugins { id 'java-plaform' }
+javaPlatform { allowDependencies() }
 dependencies {
-    bom platform('org.springframework.boot:spring-boot-dependencies:2.1.2.RELEASE')
+    api platform('org.springframework.boot:spring-boot-dependencies:2.1.2.RELEASE')
 }
 
 ````
 
-this shall be reused in the subproject 
+this can be reused in the subproject:
 
 ````groovy
 dependencies {
-    implementation platform(project(path: ":", configuration: "bom"))
+    implementation project(path: ":")
 
-    implementation 'org.springframework.boot:spring-boot-test'
+    implementation 'org.apache.commons:commons-lang3'
 }
 ````
 
-but then the build is broken when upgrading from 5.6.4 to 6.0 
+then the build is successful:
 
 ````groovy
-$ ./gradlew assemble
+$ ./gradlew clean assemble --no-build-cache
 
-FAILURE: Build failed with an exception.
-
-* Where:
-Build file 'C:\Java\Sources\Temp\gradle-6.8-bom-showcase\lib1\build.gradle' line: 6
-
-* What went wrong:
-A problem occurred evaluating project ':lib1'.
-> Cannot add attributes or capabilities on a dependency that specifies artifacts or configuration information
-
-* Try:
-Run with --stacktrace option to get the stack trace. Run with --info or --debug option to get more log output. Run with --scan to get full insights.
-
-* Get more help at https://help.gradle.org
-
-BUILD FAILED in 3s
+BUILD SUCCESSFUL in 4s
+4 actionable tasks: 4 executed
 ````
+
+# links
+Basics:
+https://docs.gradle.org/current/userguide/platforms.html
+
+very close UseCase:
+https://docs.gradle.org/current/userguide/dependency_version_alignment.html
