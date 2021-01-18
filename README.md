@@ -54,3 +54,24 @@ plugins {
 ```
 seems to solve the issue, but why?
 Ultimately I'd like to not have to apply java to an ear project as java code does not make any sense in a packaging only project.
+
+this still worked in gradle 6.4.1
+```
+./gradlew clean assemble --no-build-cache
+Downloading https://services.gradle.org/distributions/gradle-6.4.1-bin.zip
+.........10%..........20%..........30%..........40%.........50%..........60%..........70%..........80%.........90%..........100%
+
+Welcome to Gradle 6.4.1!
+
+Here are the highlights of this release:
+ - Support for building, testing and running Java Modules
+ - Precompiled script plugins for Groovy DSL
+ - Single dependency lock file per project
+
+For more details see https://docs.gradle.org/6.4.1/release-notes.html
+
+Starting a Gradle Daemon (subsequent builds will be faster)
+
+BUILD SUCCESSFUL in 35s
+5 actionable tasks: 5 executed
+```
