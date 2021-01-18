@@ -1,35 +1,27 @@
 # Problem
 
 
-I've defined a new configuration in EjbModule called `bom` with a platform dependency.
-This is used for convenience to not repeat the bom for every configuration that it should usually be used in.
-
+I've used a BOM (platform dependency) to define the version of a projects dependency:
 
 ````groovy
 plugins {
     id 'java-library'
 }
 
-configurations {
-    bom // convinience configuration to apply boms to more than one configuration
-    implementation.extendsFrom bom
-    ... // and various others
-}
-
 dependencies {
-    bom platform('org.springframework.boot:spring-boot-dependencies:2.1.2.RELEASE')
+    implementation platform('org.springframework.boot:spring-boot-dependencies:2.1.2.RELEASE')
 
     implementation 'org.apache.commons:commons-lang3' // version 3.8.1 selected by spring boot pom
 }
 ````
-while this works in the `EjbModule`, the resolution of the transitive dependency for the `EarModule` is broken if I try to configure it like this:
+while this works for the `EjbModule`, the resolution of the transitive dependency in the `EarModule` is broken if I try to configure it like this:
 ```groovy
 plugins {
     id 'ear'
 }
 dependencies {
     deploy project(path:":EjbModule")
-    earlib project(path:":EjbModule") // add transitive dependencies of the EjbModule too
+    earlib project(path:":EjbModule") // add transitive dependencies of the EjbModule to the lib folder
 }
 ```
 adding the BOM again to any of the Ear Plugins configurations does not fix the following error:
@@ -53,7 +45,7 @@ Run with --stacktrace option to get the stack trace. Run with --info or --debug 
 * Get more help at https://help.gradle.org
 ````
 
-The strange thing is, adding the `java` plugin to the `ear` project
+The strange thing is, adding the `java` plugin to the `ear` project:
 ```groovy
 plugins {
     id 'ear'
@@ -61,4 +53,4 @@ plugins {
 }
 ```
 seems to solve the issue, but why?
-Ultimately I'd like to not have to apply java to a ear project as java code does not make any sense in a packaging only project.
+Ultimately I'd like to not have to apply java to an ear project as java code does not make any sense in a packaging only project.
