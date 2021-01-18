@@ -12,7 +12,6 @@ dependencies {
 ````
 
 this can be reused in the subproject:
-
 ````groovy
 dependencies {
     implementation project(path: ":")
@@ -22,8 +21,7 @@ dependencies {
 ````
 
 then the build is successful:
-
-````groovy
+````
 $ ./gradlew clean assemble --no-build-cache
 
 BUILD SUCCESSFUL in 4s
